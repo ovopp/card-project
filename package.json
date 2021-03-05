@@ -1,27 +1,28 @@
 {
   "name": "card-project",
   "version": "1.0.0",
-  "description": "",
+  "description": "This project started out as a personal hobby looking for something to do with my friends during the covid-19 outbreak. I had gotten into playing a few card games with my friends and wanted to recreate something similar that we could play online and not have to meet each other inn person. I initally decided to recreate a game called red flags since it had fairly simple rules and I felt I could recreate it but I am definitely going to use everything I learned during this project to recreate other games in the future and expand upon it.",
   "main": "app.js",
-  "scripts": {
-    "start": "nodemon app.js"
+  "dependencies": {
+    "ejs": "^3.1.6",
+    "express": "^4.17.1",
+    "mongodb": "^3.6.4",
+    "mongoose": "^5.11.18",
+    "socket.io": "^2.4.1"
   },
-  "author": "Kenneth Harmon",
-  "license": "ISC",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
+  },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/KennethHarmon/card-project.git"
+    "url": "git+https://github.com/ovopp/card-project.git"
   },
+  "author": "",
+  "license": "ISC",
   "bugs": {
-    "url": "https://github.com/KennethHarmon/card-project/issues"
+    "url": "https://github.com/ovopp/card-project/issues"
   },
-  "homepage": "https://github.com/KennethHarmon/card-project#readme",
-  "dependencies": {
-    "body-parser": "^1.19.0",
-    "cardcast-api": "^0.2.3",
-    "ejs": "^3.0.1",
-    "express": "^4.17.1",
-    "mongoose": "^5.9.6",
-    "socket.io": "^2.3.0"
-  }
+  "homepage": "https://github.com/ovopp/card-project#readme"
 }

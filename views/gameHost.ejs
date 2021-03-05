@@ -143,7 +143,7 @@
         var listItem = ""; 
         $.each( data.hand, function( i, item ) {
             var type = data.hand[i].type;
-            if(data.hand[i].hasBlank === "TRUE"){
+            if(data.hand[i].hasBlank === true){
                 listItem += "<div class='col-5 col-sm-3 col-lg-2 col-xl-1 game" + type + "card handcard blank'><p>" + item.text + "</p></div>";
             }
             else{
@@ -267,18 +267,20 @@
 
     function makeLeaderBoard(playerList) {
         console.log("Making LeaderBoard")
-        var tempItem = "<h4>Leaderboard: ";
+        var tempItem = `<h4>Leaderboard</h4>
+        <ul style="list-style: none;">`;
         console.log(playerList)
         playerList.forEach(element => {
             Leaderboard[element] = 0;
-            tempItem += element + ": " + Leaderboard[element] + " "
+            tempItem += "<li>" + element + ": " + Leaderboard[element] + "</li>"
         });
-        tempItem += "</h4>"
+        tempItem += "</ul>"
         $("#leaderboard").html(tempItem);
     };
 
     function updateLeaderBoard(playerList,winner){
-        var tempItem = "<h4>Leaderboard: ";
+        var tempItem = `<h4>Leaderboard</h4>
+        <ul style="list-style: none;">`;
         console.log(playerList)
         playerList.forEach(element => {
             if(winner){
@@ -286,10 +288,9 @@
                 Leaderboard[element]++;
                 }
             }
-
-            tempItem += element + ": " + Leaderboard[element] + " "
+            tempItem += "<li>" + element + ": " + Leaderboard[element] + "</li>"
         });
-        tempItem += "</h4>"
+        tempItem += "</ul>"
         $("#leaderboard").html(tempItem);
     };
 
@@ -340,7 +341,8 @@
         }
         else {
             $("#overlay").css("display","none");
-            $("#instructions").text("Please pick a red card for someone else:");
+            playerList
+            $("#instructions").text("Please pick a red card for the date to the right of your date:");
         }
 
         cardDisplayIndex = 0;

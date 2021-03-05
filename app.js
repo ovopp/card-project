@@ -5,11 +5,23 @@ var app = express();
 var http = require('http').createServer(app);
 var io = require('socket.io')(http);
 var bodyParser = require("body-parser");
-const maindeck = require("./cards.json")
+// const maindeck = require("./cards.json")
 
 app.use(bodyParser.urlencoded({extended: true}))
 app.use(express.static("public"));
 app.set("view engine", "ejs");
+
+//////////////////////////////////////////// Connection to mongoDB //////////////////////////////////////
+const { MongoClient } = require('mongodb');
+const uri = "mongodb+srv://admin:By9b9736XkUGKcr@partnerme.jv6xf.mongodb.net/<dbname>?retryWrites=true&w=majority";
+const client = new MongoClient(uri);
+
+
+// gets the deck from the mongo DB
+var maindeck = {"Red" : [], "White":[]};
+getDeckFromDB();
+
+
 
 ///////////////////////////////////////////Server Variables/////////////////////////////////////
 var playerList = [];
@@ -21,8 +33,7 @@ var masterDeck = maindeck;
 
 //Serve index page
 app.get('/', function(req, res){
-  //var randomCards = getRandomCards(2,1);
-  //console.log("randomCards: " + randomCards)
+  masterDeck = maindeck;
   res.render("index")
 });
 
@@ -50,6 +61,36 @@ app.get("/game", function(req,res) {
     res.redirect("/");
   }
 })
+
+//Create New Cards
+app.post("/game/create-card", function(req,res){  
+  console.log({
+      text: req.body.cardText,
+      type: req.body.cardColour,
+      hasBlank: req.body.cardText.includes('_____')
+    });
+  if(req.body.cardColour === 'red'){
+    client.db("redFlags").collection("red-cards").insertOne(
+      {
+        text: req.body.cardText,
+        type: 'red',
+        hasBlank: req.body.cardText.includes('_____')
+      }
+    )
+    console.log("successfully inserted a red card into DB");
+  }
+  else{
+    client.db("redFlags").collection("white-cards").insertOne(
+      {
+        text: req.body.cardText,
+        type: 'white',
+        hasBlank: req.body.cardText.includes('_____')
+      }
+    )
+    console.log("successfully inserted a red card into DB"); 
+  }
+  res.redirect("/");
+});
 
 //Join Game
 app.post("/game/join", function(req,res) {
@@ -147,6 +188,8 @@ io.on('connection', function (socket) {
       console.log("Game started in room: " + socket.lobbycode + " by " + socket.username)
       lobbyList[socket.lobbycode].scoreLimit = scoreLimit;
       lobbyList[socket.lobbycode].gameStarted = true;
+      // Update the deck, then setup the deck
+      getDeckFromDB();
       setupDecks(socket,4,3);
       chooseRandomSingle(socket);
       io.to(socket.lobbycode).emit("scorelimit",scoreLimit);
@@ -233,7 +276,11 @@ io.on('connection', function (socket) {
     io.to(socket.lobbycode).emit("chat message", {sender: socket.username, msg: msg});
   });
 
-  socket.on('disconnect', function () {
+  socket.on('disconnect',  (reason) => {
+    // if(reason === 'io server disconnect'){
+    //   console.log(socket);
+    //   socket.connected();
+    // }
     var connectionMessage = socket.username + " Disconnected from Socket " + socket.id;
     console.log(connectionMessage);
     removePlayer(socket.username);
@@ -259,7 +306,27 @@ http.listen(3024 ,function(){
 
 ///////////////////////////////////////////////////Functions/////////////////////////////////////////
 
-
+function getDeckFromDB(){
+  client.connect().then( function(){
+    client.db("redFlags").collection("red-cards").find({}).toArray( function (err, result){
+      if (err) {
+        console.log("Error in collection from MongoDB");
+      }
+      else{
+        maindeck["Red"] = result;
+      }
+    });
+    
+    client.db("redFlags").collection("white-cards").find({}).toArray( function (err, result){
+      if (err) {
+        console.log("Error in collection from MongoDB");
+      }
+      else{
+        maindeck["White"] = result;
+      }
+    });
+  });
+}
 
 /////////////////////////////////////////////////Object Creation + Player adding//////////////////////////////////////////
 function checkUserExists(username) {
@@ -347,13 +414,13 @@ function setupDecks(socket,white,red) {
       
       //load the white cards
       for (var j = 0; j < white; j++) {
-        var item = masterDeck.White[Math.floor(Math.random() * masterDeck.White.length)];
+        var item = masterDeck.White.splice(Math.floor(Math.random() * masterDeck.White.length),1)[0];
         temp.push(item);
       }
       
       //Load the red cards
       for (var j = 0; j < red; j++) {
-        var item = masterDeck.Red[Math.floor(Math.random() * masterDeck.Red.length)];
+        var item = masterDeck.Red.splice(Math.floor(Math.random() * masterDeck.Red.length),1)[0];
         temp.push(item);
       }
 

@@ -27,6 +27,20 @@
                                 <button type="submit" class="btn btn-lg  btn-secondary mt-3">Join Game</button>
                             </div>      
                         </form>
+                        <form action="/game/create-card" method="POST" class="mt-5">
+                            <div class="form-row">
+                                <select name="cardColour" id="card-colour">
+                                    <option value="red">Red</option>
+                                    <option value="white">White</option>
+                                </select>
+                                <div class="col">
+                                    <input class="form-control" type="text" name = "cardText" placeholder="Enter card text, enter 5 underscores for blanks" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-lg  btn-secondary mt-3">Create Card</button>
+                            </div>      
+                        </form>
                     </div>
                 </div>
             </div>
