@@ -2,6 +2,7 @@
 
 var express = require('express');
 var app = express();
+var port = process.env.PORT || 3024;
 var http = require('http').createServer(app);
 var io = require('socket.io')(http);
 var bodyParser = require("body-parser");
@@ -300,8 +301,8 @@ app.get("*", function(req,res) {
   res.send("Error, page not found");
 })
 
-http.listen(3024 ,function(){
-  console.log('listening on *:3024');
+http.listen(port ,function(){
+  console.log(`listening on *:${port}`);
 });
 
 ///////////////////////////////////////////////////Functions/////////////////////////////////////////
@@ -323,7 +324,7 @@ function getDeckFromDB(){
       }
       else{
         maindeck["White"] = result;
-        
+
       }
     });
   });
