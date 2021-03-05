@@ -323,6 +323,7 @@ function getDeckFromDB(){
       }
       else{
         maindeck["White"] = result;
+        
       }
     });
   });
